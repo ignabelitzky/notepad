@@ -1,2 +1,2 @@
-# notepad
-Simple notepad app for linux
+# Notepad
+Simple notepad app for linux.
