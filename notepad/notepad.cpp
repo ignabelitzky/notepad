@@ -6,15 +6,19 @@ Notepad::Notepad(QWidget *parent)
     , ui(new Ui::Notepad)
 {
     ui->setupUi(this);
-    this->setCentralWidget(ui->textEdit);
+    setAttribute(Qt::WA_DeleteOnClose); // Qt takes care of deleting the window from memory
+    setWindowTitle(QString("%1[*]").arg("Unnamed File"));
     currentFile.clear();
     editor = Notepad::findChild<QTextEdit *>(QStringLiteral("textEdit"));
+    setCentralWidget(editor);
 
     connect(ui->actionNew, &QAction::triggered, this, &Notepad::new_document);
     connect(ui->actionOpen, &QAction::triggered, this, &Notepad::open);
     connect(ui->actionSave, &QAction::triggered, this, &Notepad::save);
     connect(ui->actionSaveAs, &QAction::triggered, this, &Notepad::save_as);
     connect(ui->actionExit, &QAction::triggered, this, &Notepad::exit);
+
+    statusBar()->showMessage("Done");
 }
 
 Notepad::~Notepad()
@@ -25,7 +29,7 @@ Notepad::~Notepad()
 void Notepad::new_document()
 {
     currentFile.clear();
-    editor->setText(QString());
+    editor->setText(QString(""));
 }
 
 void Notepad::open()
@@ -39,7 +43,8 @@ void Notepad::open()
         setWindowTitle(fileName);
         QTextStream in(&file);
         QString text = in.readAll();
-        editor->setText(text);
+        editor->clear();
+        editor->append(text);
         file.close();
     }
 }
